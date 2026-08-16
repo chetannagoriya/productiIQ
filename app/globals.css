@@ -60,3 +60,13 @@ body{font-family:var(--font-geist-sans),Arial,sans-serif;font-size:14px;line-hei
 .dark{--bg:#0f1520;--card:#171e2a;--text:#edf1f7;--muted:#98a3b3;--line:#2b3544}.dark .sidebar{background:#0b111b}.dark .metric-icon,.dark .product-pic,.dark .issue,.dark .folder{background:#232c39!important;color:#bdc7d6!important}.dark .data-table .th{background:#121925}.dark .search kbd{background:#202938}.dark .chart-bars{background:repeating-linear-gradient(to bottom,transparent 0,transparent 38px,#26303d 39px)}
 @media(max-width:1000px){.app{grid-template-columns:78px 1fr}.content{padding:28px 24px}.brandmark{font-size:9px}.metrics{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.app{display:block}.content{padding:22px 15px 34px}.page-title{align-items:flex-start}.page-title h1{font-size:25px}.page-actions .synced{display:none}.metrics{grid-template-columns:1fr 1fr;gap:10px}.metric{min-height:82px;padding:14px;grid-template-columns:1fr}.metric-icon{display:none}.metric small{display:none}.metric div b{font-size:21px}.grid-main,.lower-grid,.analytics-grid,.export-layout{gap:12px}.quality,.activity,.recent,.attention{padding:18px}.quick>div:last-child{display:flex}.quick .outline{display:none}.app header{padding:0 15px}}
+
+/* Keep the sidebar footer inside short laptop viewports. */
+.sidebar{height:100dvh;min-height:0;overflow:hidden}
+.sidebar>.brand,.sidebar>.workspace,.sidebar>.usage,.sidebar>.profile{flex-shrink:0}
+.sidebar nav{min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:3px;scrollbar-width:thin;scrollbar-color:#354258 transparent}
+.sidebar nav::-webkit-scrollbar{width:4px}.sidebar nav::-webkit-scrollbar-thumb{background:#354258;border-radius:4px}
+.usage{padding:12px 8px 11px}.usage small{display:block;line-height:1.35;white-space:nowrap}
+.profile{min-height:44px;background:#111827;position:relative;z-index:2}
+.dark .profile{background:#0b111b}
+@media(max-height:760px) and (min-width:701px){.sidebar{padding-top:15px;padding-bottom:10px}.brand{padding-bottom:12px}.workspace{margin-bottom:10px}.sidebar nav p{margin-top:10px;margin-bottom:5px}.sidebar nav button{min-height:34px;padding-top:7px;padding-bottom:7px}.usage{padding-top:9px;padding-bottom:8px}.profile{min-height:40px}}

@@ -1,44 +1,77 @@
 # ProductIQ AI
 
-ProductIQ AI is a responsive industrial product intelligence workspace that turns fragmented product documents into structured, traceable, commerce-ready data.
+ProductIQ AI is a product-data operations workspace for industrial catalog teams. It converts fragmented datasheets, spreadsheets, images, and manufacturer pages into structured product profiles with field-level confidence, source evidence, and a human review trail.
 
-## Included MVP workflow
+## Why this project
 
-- Dashboard with quality, completeness, confidence, activity, and review metrics
-- Five realistic industrial demo products
-- New intelligence project form with simulated file ingestion
-- Ten-step multi-agent processing workflow
-- Product profiles with field-level confidence and source citations
-- Source evidence panel with highlighted document evidence and score explanation
-- Human validation queue with approve, reject, edit, comments, and audit feedback
-- Catalog management, product comparison, knowledge graph, and analytics
+Industrial product data is usually scattered across PDFs, legacy spreadsheets, and supplier websites. Catalog teams spend hours copying values, normalizing units, resolving conflicts, and checking mandatory fields. ProductIQ demonstrates one workflow for making that process faster without removing human oversight.
+
+## Demo workflow
+
+1. Create an intelligence project from the top-right action.
+2. Add product details and source documents.
+3. Watch the extraction, enrichment, validation, and scoring pipeline run.
+4. Inspect the generated product profile and its source evidence.
+5. Approve or reject uncertain attributes in the validation queue.
+6. Compare products, explore relationships, and configure an export.
+
+The repository uses representative local data so the complete journey works without API keys or external services.
+
+## Features
+
+- Catalog health dashboard and processing metrics
+- Searchable industrial product profiles
+- Field-level confidence and source traceability
+- Human validation queue with review actions
+- Side-by-side product comparison
+- Product knowledge graph and quality analytics
 - JSON, CSV, Excel, XML, and API export configuration
-- Responsive light and dark interfaces
+- Responsive light and dark themes
 
-All data and AI activity are simulated for the prototype. The component boundaries are ready to connect to real ingestion, extraction, classification, enrichment, validation, vector search, graph, and publishing services.
+## Tech stack
 
-## Run locally
+- React 19 and TypeScript
+- Vinext and Vite
+- CSS design system in `app/globals.css`
+- Node test runner for server-render smoke tests
+- ESLint with React, accessibility, and TypeScript rules
 
-Requirements: Node.js 22.13 or newer.
+## Project structure
+
+```text
+app/
+├── hooks/
+│   └── use-search-shortcut.ts   # Global keyboard interaction
+├── lib/
+│   └── product-data.ts          # Domain types and demo fixtures
+├── globals.css                  # Tokens, components, and responsive styles
+├── layout.tsx                   # Metadata and root document
+└── page.tsx                     # Application shell and feature views
+db/                              # Drizzle schema and database entry point
+tests/                           # Server-render and workflow smoke tests
+worker/                          # Cloudflare worker entry point
+```
+
+## Local development
+
+Requires Node.js 22.13 or newer.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the local URL printed in the terminal. Create a project from the top-right button to run the complete demo journey.
+Open the URL printed by the development server.
 
-## Verify a production build
+## Quality checks
 
 ```bash
-npm run build
+npm run lint
+npm test
 ```
 
-## Architecture
+`npm test` creates a production build before running the server-render tests, so it also catches bundling and route failures.
 
-- `app/page.tsx` — interactive application shell and end-to-end demo flows
-- `app/globals.css` — responsive enterprise design system and dark mode
-- `public/og.png` — ProductIQ social preview asset
-- `.openai/hosting.json` — Sites deployment configuration
+## Production roadmap
 
-The prototype intentionally keeps its demo state in the browser. A production implementation can add PostgreSQL/D1 persistence, R2/S3 document storage, Qdrant/Pinecone retrieval, Neo4j relationships, API routes, and organization-scoped authentication without changing the core user flows.
+The current submission focuses on a reliable, judge-friendly end-to-end prototype. The component boundaries are ready for PostgreSQL/D1 persistence, R2/S3 document storage, OCR and extraction services, vector retrieval, organization authentication, and PIM/ERP publishing integrations.

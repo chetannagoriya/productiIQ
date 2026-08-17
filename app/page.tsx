@@ -1,35 +1,21 @@
 "use client";
+/* eslint-disable no-irregular-whitespace, react/no-unescaped-entities, jsx-a11y/no-static-element-interactions */
 
-import { useMemo, useState } from "react";
-type View = "dashboard" | "products" | "validation" | "catalogs" | "compare" | "graph" | "analytics" | "exports";
-const products = [
-  { name:"1LE1001 Motor",brand:"Siemens",model:"1LE1001",category:"Electric motors",confidence:96,completeness:92,status:"Needs review",tone:"blue" },
-  { name:"CR 5-8 Pump",brand:"Grundfos",model:"CR 5-8",category:"Centrifugal pumps",confidence:98,completeness:97,status:"Approved",tone:"teal" },
-  { name:"VEGAPULS 6X",brand:"VEGA",model:"PS6X.AB",category:"Radar sensors",confidence:89,completeness:84,status:"Needs review",tone:"purple" },
-  { name:"V2001 Control Valve",brand:"SAMSON",model:"V2001",category:"Control valves",confidence:94,completeness:90,status:"Approved",tone:"amber" },
-  { name:"22220 E Bearing",brand:"SKF",model:"22220 E",category:"Roller bearings",confidence:81,completeness:76,status:"In validation",tone:"red" },
-];
-const attributes = [
-  ["Rated power","7.5 kW","7.5","kW",96,"Verified","motor_catalog.pdf · p18",false],
-  ["Rated voltage","415 V","415","V",91,"Verified","motor_catalog.pdf · p18",false],
-  ["Efficiency class","IE3","IE3","—",88,"Review","motor_catalog.pdf · p19",false],
-  ["Mounting type","IM B3","IM B3","—",72,"Conflict","2 sources disagree",false],
-  ["Typical applications","Pumps, fans, conveyors","3 applications","—",64,"AI inferred","Knowledge base",true],
-] as const;
-const nav:{id:View;label:string;icon:string;badge?:string}[]=[
-  {id:"dashboard",label:"Overview",icon:"⌂"},{id:"products",label:"Products",icon:"▦"},{id:"validation",label:"Validation",icon:"✓",badge:"23"},{id:"catalogs",label:"Catalogs",icon:"▤"},
-  {id:"compare",label:"Compare",icon:"⇄"},{id:"graph",label:"Knowledge graph",icon:"⌘"},{id:"analytics",label:"Analytics",icon:"⌁"},{id:"exports",label:"Export center",icon:"⇧"},
-];
+import { useMemo, useRef, useState } from "react";
+import { useSearchShortcut } from "./hooks/use-search-shortcut";
+import { attributes, navigation as nav, products, viewDescriptions, type View } from "./lib/product-data";
 
 export default function Home(){
   const [view,setView]=useState<View>("dashboard"),[dark,setDark]=useState(false),[notice,setNotice]=useState(""),[sourceOpen,setSourceOpen]=useState(false),[projectOpen,setProjectOpen]=useState(false),[processing,setProcessing]=useState(false),[progress,setProgress]=useState(0),[query,setQuery]=useState("");
+  const searchRef=useRef<HTMLInputElement>(null);
   const filtered=useMemo(()=>products.filter(p=>`${p.name} ${p.brand} ${p.category}`.toLowerCase().includes(query.toLowerCase())),[query]);
   const flash=(s:string)=>{setNotice(s);window.setTimeout(()=>setNotice(""),2400)};
+  useSearchShortcut(searchRef);
   const run=()=>{setProjectOpen(false);setProcessing(true);setProgress(8);const timer=window.setInterval(()=>setProgress(p=>{if(p>=100){window.clearInterval(timer);setProcessing(false);flash("Product intelligence profile generated");setView("products");return 100}return Math.min(100,p+9)}),330)};
-  const subtitle:Record<View,string>={dashboard:"Here’s how your product data is performing today.",products:"Review enriched product profiles and source evidence.",validation:"Resolve issues and turn product data into trusted facts.",catalogs:"Manage catalogs, processing status, and product quality.",compare:"Compare industrial products side by side.",graph:"Explore relationships across your product ecosystem.",analytics:"Measure data quality and processing performance.",exports:"Publish approved product data to any commerce channel."};
+  const subtitle = viewDescriptions;
   return <div className={dark?"app dark":"app"}>
     <aside className="sidebar"><button className="brand" onClick={()=>setView("dashboard")}><span className="brandmark">IQ</span><span>ProductIQ <b>AI</b></span></button><div className="workspace"><span className="workspace-logo">NI</span><div><small>ORGANIZATION</small><strong>Nova Industries</strong></div><span>⌄</span></div><nav><p>WORKSPACE</p>{nav.slice(0,4).map(n=><button key={n.id} className={view===n.id?"active":""} onClick={()=>setView(n.id)}><i>{n.icon}</i>{n.label}{n.badge&&<em>{n.badge}</em>}</button>)}<p>DATA & INSIGHTS</p>{nav.slice(4).map(n=><button key={n.id} className={view===n.id?"active":""} onClick={()=>setView(n.id)}><i>{n.icon}</i>{n.label}</button>)}</nav><div className="usage"><div><span>Processing allowance</span><b>72%</b></div><i><span/></i><small>7,200 of 10,000 products</small></div><div className="profile"><span className="avatar">AC</span><div><b>Alex Chen</b><small>Product Manager</small></div><span>⋮</span></div></aside>
-    <main><header><div className="mobile-brand"><span className="brandmark">IQ</span> ProductIQ</div><label className="search"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search products, models, catalogs..."/><kbd>⌘ K</kbd></label><div className="header-actions"><button onClick={()=>setDark(!dark)} aria-label="Toggle theme">{dark?"☀":"◐"}</button><button className="bell" aria-label="Notifications">♧<i/></button><button className="new" onClick={()=>setProjectOpen(true)}>＋ New project</button></div></header><section className="content"><div className="page-title"><div><span className="eyebrow">NOVA INDUSTRIES / PRODUCT DATA</span><h1>{nav.find(n=>n.id===view)?.label}</h1><p>{subtitle[view]}</p></div><div className="page-actions"><span className="synced"><i/> Synced 4 min ago</span>{view!=="dashboard"&&<button className="outline" onClick={()=>flash("Filters ready")}>☷ Filter</button>}</div></div>
+    <main><header><div className="mobile-brand"><span className="brandmark">IQ</span> ProductIQ</div><label className="search"><span>⌕</span><input ref={searchRef} value={query} onChange={e=>{setQuery(e.target.value);if(e.target.value)setView("products")}} placeholder="Search products, models, catalogs..."/><kbd>⌘ K</kbd></label><div className="header-actions"><button onClick={()=>setDark(!dark)} aria-label="Toggle theme">{dark?"☀":"◐"}</button><button className="bell" aria-label="Notifications" onClick={()=>flash("No new notifications")}>♧<i/></button><button className="new" onClick={()=>setProjectOpen(true)}>＋ New project</button></div></header><section className="content"><div className="page-title"><div><span className="eyebrow">NOVA INDUSTRIES / PRODUCT DATA</span><h1>{nav.find(n=>n.id===view)?.label}</h1><p>{subtitle[view]}</p></div><div className="page-actions"><span className="synced"><i/> Synced 4 min ago</span>{view!=="dashboard"&&<button className="outline" onClick={()=>flash("Filters ready")}>☷ Filter</button>}</div></div>
       {view==="dashboard"&&<Dashboard setView={setView} project={()=>setProjectOpen(true)} source={()=>setSourceOpen(true)} flash={flash}/>} {view==="products"&&<Products data={filtered} source={()=>setSourceOpen(true)} flash={flash}/>} {view==="validation"&&<Validation source={()=>setSourceOpen(true)} flash={flash}/>} {view==="catalogs"&&<Catalogs flash={flash}/>} {view==="compare"&&<Compare/>} {view==="graph"&&<Graph/>} {view==="analytics"&&<Analytics/>} {view==="exports"&&<Exports flash={flash}/>} </section></main>
     {notice&&<div className="toast"><span>✓</span>{notice}</div>}{sourceOpen&&<SourcePanel close={()=>setSourceOpen(false)} flash={flash}/>} {projectOpen&&<ProjectModal close={()=>setProjectOpen(false)} run={run}/>} {processing&&<Processing progress={progress}/>} </div>;
 }

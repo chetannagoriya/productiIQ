@@ -31,7 +31,7 @@ The repository uses representative local data so the complete journey works with
 ## Tech stack
 
 - React 19 and TypeScript
-- Vinext and Vite
+- Next.js 16 with the App Router
 - CSS design system in `app/globals.css`
 - Node test runner for server-render smoke tests
 - ESLint with React, accessibility, and TypeScript rules
@@ -49,7 +49,7 @@ app/
 └── page.tsx                     # Application shell and feature views
 db/                              # Drizzle schema and database entry point
 tests/                           # Server-render and workflow smoke tests
-worker/                          # Cloudflare worker entry point
+vercel.json                      # Vercel framework configuration
 ```
 
 ## Local development
